@@ -21,7 +21,8 @@ export interface PrivacyCopy {
 export const privacyCopy: Record<Lang, PrivacyCopy> = {
   sk: {
     title: 'Ochrana údajov',
-    description: 'Ako zaobchádzam s údajmi, ktoré mi pošlete cez kontaktný formulár.',
+    description:
+      'Ako zaobchádzam s osobnými údajmi, ktoré mi pošlete cez kontaktný formulár: čo zbieram, prečo a aké máte práva.',
     draftNote: '[TODO: pred spustením skontrolovať právne znenie tejto stránky]',
     intro:
       'Tu vysvetľujem, aké údaje získavam cez kontaktný formulár, na čo ich používam a aké máte práva.',
@@ -76,7 +77,8 @@ export const privacyCopy: Record<Lang, PrivacyCopy> = {
   },
   en: {
     title: 'Privacy',
-    description: 'How I handle the data you send me through the contact form.',
+    description:
+      'How I handle the personal data you send me through the contact form: what I collect, why, and what rights you have.',
     draftNote: '[TODO: have the legal wording of this page reviewed before launch]',
     intro:
       'This page explains what data I collect through the contact form, what I use it for and what rights you have.',

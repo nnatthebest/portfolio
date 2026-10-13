@@ -1,12 +1,19 @@
 ---
 import HomePage from '../../components/home/HomePage.astro';
-import { site } from '../../config';
-import { getLang, t } from '../../i18n/ui';
+import { homeCopy } from '../../i18n/copy';
+import { getLang } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildHomeJsonLd } from '../../lib/jsonld';
 
 const lang = getLang(Astro.currentLocale);
+const { title, description } = homeCopy[lang].meta;
+const origin = (Astro.site ?? new URL(Astro.url.origin)).origin;
 ---
 
-<BaseLayout title={site.name} description={t(lang, 'tagline')}>
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[buildHomeJsonLd({ origin, lang, description })]}
+>
   <HomePage lang={lang} />
 </BaseLayout>

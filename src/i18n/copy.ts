@@ -14,6 +14,8 @@ export interface FaqItem {
 export type ProjectType = 'website' | 'webapp' | 'automation' | 'mobile';
 
 export interface HomeCopy {
+  /** Search-result title (≤ 60 characters) and description (70–160). Unique per language. */
+  meta: { title: string; description: string };
   hero: {
     eyebrow: string;
     title: string;
@@ -33,6 +35,11 @@ export interface HomeCopy {
 /** Homepage copy. Source: docs/brief.md. No invented figures, clients or testimonials. */
 export const homeCopy: Record<Lang, HomeCopy> = {
   sk: {
+    meta: {
+      title: 'Weby a automatizácia pre malé firmy | Daniil',
+      description:
+        'Rýchle weby a automatizácia pre malé firmy: dopyty padajú rovno do tabuľky, klient dostane automatickú odpoveď a rezervácie fungujú samy.',
+    },
     hero: {
       eyebrow: 'Daniil Biiakov · Bratislava',
       title: 'Weby a automatizácia pre malé firmy. Rýchlo a poriadne.',
@@ -115,6 +122,11 @@ export const homeCopy: Record<Lang, HomeCopy> = {
     },
   },
   en: {
+    meta: {
+      title: 'Websites and automation for small businesses | Daniil',
+      description:
+        'Fast websites and automation for small businesses: enquiries go straight to a spreadsheet, customers get an automatic reply, bookings run on their own.',
+    },
     hero: {
       eyebrow: 'Daniil Biiakov · Bratislava',
       title: 'Websites and automation for small businesses. Fast, and done right.',
@@ -250,7 +262,8 @@ export const projectsCopy: Record<Lang, ProjectsCopy> = {
   sk: {
     list: {
       title: 'Projekty',
-      description: 'Ukážky práce: weby, aplikácie a automatizácie pre malé firmy.',
+      description:
+        'Ukážky práce: weby, webové aplikácie a automatizácie pre malé firmy. Pozrite si, ako pristupujem k zadaniam.',
       intro: 'Ukážky toho, ako pristupujem k zadaniam malých firiem.',
       filterLabel: 'Filtrovať podľa typu',
       all: 'Všetky',
@@ -280,7 +293,8 @@ export const projectsCopy: Record<Lang, ProjectsCopy> = {
   en: {
     list: {
       title: 'Projects',
-      description: 'Examples of work: websites, web apps and automations for small businesses.',
+      description:
+        'Examples of work: websites, web apps and automations for small businesses. See how I approach a brief.',
       intro: 'A look at how I approach briefs from small businesses.',
       filterLabel: 'Filter by type',
       all: 'All',

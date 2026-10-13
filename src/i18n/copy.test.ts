@@ -1,6 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { homeCopy, projectTypeLabels, projectsCopy } from './copy';
 
+describe('homeCopy meta', () => {
+  it('gives each language its own title and description', () => {
+    expect(homeCopy.sk.meta.title).not.toBe(homeCopy.en.meta.title);
+    expect(homeCopy.sk.meta.description).not.toBe(homeCopy.en.meta.description);
+  });
+
+  it('keeps titles and descriptions within search-result limits', () => {
+    for (const lang of ['sk', 'en'] as const) {
+      const { title, description } = homeCopy[lang].meta;
+      expect(title.length).toBeLessThanOrEqual(60);
+      expect(description.length).toBeGreaterThanOrEqual(70);
+      expect(description.length).toBeLessThanOrEqual(160);
+    }
+  });
+});
+
 describe('projectsCopy', () => {
   const collect = (value: unknown): string[] => {
     if (typeof value === 'string') return [value];

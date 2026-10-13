@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { site } from '../config';
 import { defaultLang, getLang, languages, resolveAlternates, t, type Lang } from '../i18n/ui';
+import { serializeJsonLd } from '../lib/faq-jsonld';
 
 interface Props {
   /** Defaults to the language Astro detects from the URL (`Astro.currentLocale`). */
@@ -19,6 +20,9 @@ interface Props {
   alternates?: Record<Lang, string>;
   /** Social preview image. Anything with a URL and its pixel size, e.g. `getOgImage()`. */
   image?: { src: string; width: number; height: number };
+  /** schema.org objects rendered as JSON-LD in the head. */
+  jsonLd?: readonly object[];
+  /** Hides the page from search: no canonical or hreflang is declared for it either. */
   noindex?: boolean;
 }
 
@@ -28,6 +32,7 @@ const {
   description,
   alternates = resolveAlternates(Astro.url.pathname),
   image = ogDefault,
+  jsonLd = [],
   noindex = false,
 } = Astro.props;
 
@@ -52,12 +57,13 @@ const alternateLocales = languages.filter((code) => code !== lang).map((code) =>
     <meta name="theme-color" content="#16181D" media="(prefers-color-scheme: dark)" />
     <meta name="generator" content={Astro.generator} />
 
-    <link rel="canonical" href={canonical} />
-    {alternates &&
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {!noindex &&
+      alternates &&
       languages.map((code) => (
         <link rel="alternate" hreflang={code} href={absolute(alternates[code])} />
       ))}
-    {alternates && (
+    {!noindex && alternates && (
       <link rel="alternate" hreflang="x-default" href={absolute(alternates[defaultLang])} />
     )}
 
@@ -81,6 +87,9 @@ const alternateLocales = languages.filter((code) => code !== lang).map((code) =>
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    {jsonLd.map((data) => (
+      <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
+    ))}
   </head>
   <body class="flex min-h-dvh flex-col">
     <a
@@ -90,7 +99,8 @@ const alternateLocales = languages.filter((code) => code !== lang).map((code) =>
       {t(lang, 'skipToContent')}
     </a>
     <Header lang={lang} alternates={alternates} />
-    <main id="main" class="flex-1">
+    <!-- tabindex="-1" lets the skip link move keyboard focus here; the ring would only add noise. -->
+    <main id="main" tabindex="-1" class="flex-1 focus:outline-none">
       <slot />
     </main>
     <Footer lang={lang} />

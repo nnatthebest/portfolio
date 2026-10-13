@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "audit": "node scripts/audit.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.3",
