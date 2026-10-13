@@ -211,6 +211,7 @@ const linkClass = 'text-accent-text underline decoration-1 underline-offset-4 ho
   import {
     buildPayload,
     isHoneypotFilled,
+    preselectedType,
     validateContact,
     type ContactErrorCode,
     type ContactErrors,
@@ -284,6 +285,11 @@ const linkClass = 'text-accent-text underline decoration-1 underline-offset-4 ho
     const lang: Lang = form.dataset.lang === 'en' ? 'en' : 'sk';
     const thanksUrl = form.dataset.thanks ?? '/';
     const allowedTypes = (form.dataset.types ?? '').split(',');
+
+    // Links from the services page pass ?type=<service id> to preselect the project type.
+    const requestedType = preselectedType(location.search, allowedTypes);
+    const typeSelect = form.querySelector<HTMLSelectElement>('#projectType');
+    if (requestedType && typeSelect && typeSelect.value === '') typeSelect.value = requestedType;
 
     const summary = form.querySelector<HTMLElement>('[data-form-summary]');
     const status = form.querySelector<HTMLElement>('[data-form-status]');

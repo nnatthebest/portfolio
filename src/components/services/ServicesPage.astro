@@ -1,0 +1,67 @@
+---
+import Container from '../Container.astro';
+import FinalCta from '../FinalCta.astro';
+import Section from '../Section.astro';
+import ServiceCard from '../ServiceCard.astro';
+import { homeCopy } from '../../i18n/copy';
+import { servicesCopy } from '../../i18n/pages-copy';
+import { contactPath, type Lang } from '../../i18n/ui';
+import { getServices } from '../../lib/content';
+import { splitEntryId } from '../../lib/content-utils';
+import { PROJECT_TYPE_OTHER } from '../../lib/contact-validation';
+import { formatPrice } from '../../lib/format';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = servicesCopy[lang];
+const priceCopy = homeCopy[lang].services;
+
+const services = await getServices(lang);
+---
+
+<Container class="pt-16 pb-10 md:pt-24">
+  <h1 class="text-5xl md:text-7xl">{copy.title}</h1>
+  <p class="mt-6 max-w-2xl text-lg text-muted md:text-xl">{copy.intro}</p>
+</Container>
+
+<Container class="pb-16 md:pb-24">
+  <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    {services.map((service) => (
+      <li>
+        <ServiceCard
+          headingLevel="h2"
+          title={service.data.title}
+          price={`${priceCopy.from} ${formatPrice(lang, service.data.priceFrom)}`}
+          duration={service.data.duration}
+          includes={service.data.includes}
+          cta={{
+            href: contactPath(lang, splitEntryId(service.id).slug),
+            label: copy.cta,
+          }}
+        />
+      </li>
+    ))}
+  </ul>
+  <p class="mt-8 max-w-2xl text-muted">{priceCopy.vatNote}</p>
+  <p class="mt-2 max-w-2xl text-muted">{priceCopy.promo}</p>
+</Container>
+
+<Section id="extras" heading={copy.extrasHeading}>
+  <ul class="grid gap-6 md:grid-cols-2">
+    {copy.extras.map((extra) => (
+      <li>
+        <ServiceCard
+          title={extra.title}
+          price={extra.price}
+          text={extra.text}
+          cta={{ href: contactPath(lang, PROJECT_TYPE_OTHER), label: copy.cta }}
+        />
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<FinalCta lang={lang} />

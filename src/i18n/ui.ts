@@ -89,6 +89,12 @@ export function projectPath(lang: Lang, slug: string): string {
   return `${routes.projects[lang]}${slug}/`;
 }
 
+/** Link to the contact form, optionally preselecting a project type (a service id). */
+export function contactPath(lang: Lang, projectType?: string): string {
+  const query = projectType ? `?type=${encodeURIComponent(projectType)}` : '';
+  return `${routes.contact[lang]}${query}#form`;
+}
+
 const withTrailingSlash = (path: string): string => (path.endsWith('/') ? path : `${path}/`);
 
 /**

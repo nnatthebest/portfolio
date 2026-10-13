@@ -1,0 +1,14 @@
+---
+import AboutPage from '../../components/about/AboutPage.astro';
+import { site } from '../../config';
+import { aboutCopy } from '../../i18n/pages-copy';
+import { getLang } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const lang = getLang(Astro.currentLocale);
+const copy = aboutCopy[lang];
+---
+
+<BaseLayout title={`${copy.title} — ${site.name}`} description={copy.description}>
+  <AboutPage lang={lang} />
+</BaseLayout>

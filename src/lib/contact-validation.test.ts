@@ -4,6 +4,7 @@ import {
   LIMITS,
   buildPayload,
   isHoneypotFilled,
+  preselectedType,
   validateContact,
   type ContactValues,
 } from './contact-validation';
@@ -98,6 +99,24 @@ describe('validateContact', () => {
   it('reports every problem at once', () => {
     const errors = validate({ name: '', email: 'x', message: '', consent: false });
     expect(Object.keys(errors).sort()).toEqual(['consent', 'email', 'message', 'name']);
+  });
+});
+
+describe('preselectedType', () => {
+  it('returns the type from the query string when it is offered', () => {
+    expect(preselectedType('?type=landing', PROJECT_TYPES)).toBe('landing');
+    expect(preselectedType('?foo=1&type=business-site', PROJECT_TYPES)).toBe('business-site');
+  });
+
+  it('ignores unknown types, so nothing arbitrary reaches the form', () => {
+    expect(preselectedType('?type=hacked', PROJECT_TYPES)).toBeUndefined();
+    expect(preselectedType('?type=%3Cscript%3E', PROJECT_TYPES)).toBeUndefined();
+  });
+
+  it('returns nothing when the parameter is absent or empty', () => {
+    expect(preselectedType('', PROJECT_TYPES)).toBeUndefined();
+    expect(preselectedType('?type=', PROJECT_TYPES)).toBeUndefined();
+    expect(preselectedType('?other=landing', PROJECT_TYPES)).toBeUndefined();
   });
 });
 

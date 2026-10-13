@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  contactPath,
   getLang,
   otherLang,
   projectPath,
@@ -73,6 +74,22 @@ describe('projectPath', () => {
   it('builds a case URL per language', () => {
     expect(projectPath('sk', 'studio-pohyb')).toBe('/projekty/studio-pohyb/');
     expect(projectPath('en', 'studio-pohyb')).toBe('/en/projects/studio-pohyb/');
+  });
+});
+
+describe('contactPath', () => {
+  it('links to the form on the contact page of the right language', () => {
+    expect(contactPath('sk')).toBe('/kontakt/#form');
+    expect(contactPath('en')).toBe('/en/contact/#form');
+  });
+
+  it('adds the project type to preselect in the form', () => {
+    expect(contactPath('sk', 'landing')).toBe('/kontakt/?type=landing#form');
+    expect(contactPath('en', 'booking-app')).toBe('/en/contact/?type=booking-app#form');
+  });
+
+  it('encodes the type so it cannot break the URL', () => {
+    expect(contactPath('sk', 'a b&c')).toBe('/kontakt/?type=a%20b%26c#form');
   });
 });
 

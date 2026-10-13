@@ -1,0 +1,51 @@
+---
+import Button from './Button.astro';
+import Card from './Card.astro';
+
+interface Props {
+  title: string;
+  /** Ready-to-show price, e.g. "od 290 €". */
+  price: string;
+  duration?: string;
+  text?: string;
+  includes?: readonly string[];
+  cta?: { href: string; label: string };
+  /** Heading level of the title; pick the one that follows the surrounding heading. */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const {
+  title,
+  price,
+  duration,
+  text,
+  includes = [],
+  cta,
+  headingLevel: Heading = 'h3',
+} = Astro.props;
+---
+
+<Card class="h-full">
+  <div class="flex h-full flex-col">
+    <Heading class="text-xl">{title}</Heading>
+    <p class="mt-4 font-display text-3xl font-semibold tracking-tight">{price}</p>
+    {duration && <p class="mt-1 text-sm text-muted">{duration}</p>}
+    {text && <p class="mt-4 text-muted">{text}</p>}
+    {includes.length > 0 && (
+      <ul class="mt-5 space-y-2 text-[0.95rem]">
+        {includes.map((item) => (
+          <li class="relative pl-4 before:absolute before:left-0 before:text-muted before:content-['–']">
+            {item}
+          </li>
+        ))}
+      </ul>
+    )}
+    {cta && (
+      <div class="mt-auto pt-6">
+        <Button href={cta.href} variant="secondary" size="sm">
+          {cta.label}
+        </Button>
+      </div>
+    )}
+  </div>
+</Card>

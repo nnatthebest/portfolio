@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Card from '../Card.astro';
 import Section from '../Section.astro';
+import ServiceCard from '../ServiceCard.astro';
 import { homeCopy } from '../../i18n/copy';
 import type { Lang } from '../../i18n/ui';
 import { formatPrice } from '../../lib/format';
@@ -21,22 +21,12 @@ const copy = homeCopy[lang].services;
     <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
       {services.map((service) => (
         <li>
-          <Card class="h-full">
-            <div class="flex h-full flex-col">
-              <h3 class="text-xl">{service.data.title}</h3>
-              <p class="mt-4 font-display text-3xl font-semibold tracking-tight">
-                {copy.from} {formatPrice(lang, service.data.priceFrom)}
-              </p>
-              <p class="mt-1 text-sm text-muted">{service.data.duration}</p>
-              <ul class="mt-5 space-y-2 text-[0.95rem]">
-                {service.data.includes.map((item) => (
-                  <li class="relative pl-4 before:absolute before:left-0 before:text-muted before:content-['–']">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Card>
+          <ServiceCard
+            title={service.data.title}
+            price={`${copy.from} ${formatPrice(lang, service.data.priceFrom)}`}
+            duration={service.data.duration}
+            includes={service.data.includes}
+          />
         </li>
       ))}
     </ul>

@@ -1,0 +1,29 @@
+---
+import Button from './Button.astro';
+import Container from './Container.astro';
+import { notFoundCopy } from '../i18n/pages-copy';
+import { route, type Lang } from '../i18n/ui';
+
+// One 404 file serves every missing URL on a static host, so both languages are shown.
+const languages: Lang[] = ['sk', 'en'];
+---
+
+<Container class="py-20 md:py-32">
+  <p class="mb-5 text-sm font-medium tracking-wide text-muted tabular-nums">404</p>
+  {languages.map((lang, index) => {
+    const copy = notFoundCopy[lang];
+    const Heading = index === 0 ? 'h1' : 'h2';
+    return (
+      <section lang={lang} class={index === 0 ? '' : 'mt-12 border-t border-line pt-12'}>
+        <Heading class="text-4xl md:text-6xl">{copy.title}</Heading>
+        <p class="mt-4 max-w-xl text-lg text-muted">{copy.text}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <Button href={route(lang, 'home')}>{copy.home}</Button>
+          <Button href={route(lang, 'contact')} variant="secondary">
+            {copy.contact}
+          </Button>
+        </div>
+      </section>
+    );
+  })}
+</Container>

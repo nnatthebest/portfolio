@@ -1,0 +1,65 @@
+---
+import Container from '../Container.astro';
+import FinalCta from '../FinalCta.astro';
+import HowIWork from '../home/HowIWork.astro';
+import Monogram from '../Monogram.astro';
+import Section from '../Section.astro';
+import { aboutCopy } from '../../i18n/pages-copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = aboutCopy[lang];
+---
+
+<Container class="py-16 md:py-24">
+  <div class="grid items-center gap-12 md:grid-cols-[1fr_auto]">
+    <div>
+      <p class="mb-5 text-sm font-medium tracking-wide text-muted">{copy.eyebrow}</p>
+      <h1 class="text-5xl md:text-7xl">{copy.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl md:text-2xl">{copy.lead}</p>
+      <div class="mt-8 max-w-2xl space-y-4 text-lg text-muted">
+        {copy.story.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+    </div>
+    <!-- Monogram stands in for a photo; swap this block for an <Image> later. -->
+    <div class="hidden text-fg md:block" aria-hidden="true">
+      <Monogram size={200} />
+    </div>
+  </div>
+</Container>
+
+<Section id="for-whom" number="01" heading={copy.forWhom.heading}>
+  <div class="max-w-3xl space-y-6">
+    <p class="text-lg">{copy.forWhom.intro}</p>
+    <ul class="flex flex-wrap gap-2">
+      {copy.forWhom.items.map((item) => (
+        <li class="rounded-ui border border-line px-3 py-1.5 text-sm">{item}</li>
+      ))}
+    </ul>
+    <p class="text-muted">{copy.forWhom.problem}</p>
+    <p>{copy.forWhom.edge}</p>
+  </div>
+</Section>
+
+<Section id="tools" number="02" heading={copy.tools.heading}>
+  <p class="max-w-2xl text-muted">{copy.tools.text}</p>
+  <ul class="mt-6 flex flex-wrap gap-2">
+    {copy.tools.items.map((item) => (
+      <li class="rounded-ui border border-line px-3 py-1.5 text-sm text-muted">{item}</li>
+    ))}
+  </ul>
+</Section>
+
+<Section id="languages" number="03" heading={copy.languages.heading}>
+  <p class="max-w-2xl text-lg">{copy.languages.text}</p>
+</Section>
+
+<HowIWork lang={lang} number="04" />
+
+<FinalCta lang={lang} />

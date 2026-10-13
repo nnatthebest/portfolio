@@ -86,6 +86,15 @@ export function validateContact(
   ) as ContactErrors;
 }
 
+/** The project type from `?type=` when it is one the form offers; anything else is ignored. */
+export function preselectedType(
+  search: string,
+  allowedProjectTypes: readonly string[],
+): string | undefined {
+  const requested = new URLSearchParams(search).get('type') ?? '';
+  return allowedProjectTypes.includes(requested) ? requested : undefined;
+}
+
 export function isHoneypotFilled(values: Pick<ContactValues, 'website'>): boolean {
   return values.website.trim() !== '';
 }

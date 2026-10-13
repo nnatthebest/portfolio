@@ -1,0 +1,12 @@
+---
+import NotFoundPage from '../components/NotFoundPage.astro';
+import { site } from '../config';
+import { notFoundCopy } from '../i18n/pages-copy';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = `404 — ${notFoundCopy.sk.title} · ${notFoundCopy.en.title} — ${site.name}`;
+---
+
+<BaseLayout title={title} description={notFoundCopy.sk.text} noindex>
+  <NotFoundPage />
+</BaseLayout>
