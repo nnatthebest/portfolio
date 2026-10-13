@@ -1,0 +1,76 @@
+---
+import { projectTypeLabels, projectsCopy, type ProjectType } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  types: readonly ProjectType[];
+  total: number;
+}
+
+const { lang, types, total } = Astro.props;
+const copy = projectsCopy[lang].list;
+
+const buttonClass =
+  'inline-flex min-h-11 items-center rounded-ui border border-line px-4 text-sm font-medium text-fg transition-colors duration-150 hover:border-fg aria-pressed:border-fg aria-pressed:bg-fg aria-pressed:text-bg';
+---
+
+<!-- Hidden until the script runs: without JS every project stays visible and the filter is not offered. -->
+<div data-project-filter hidden class="mb-8">
+  <div role="group" aria-label={copy.filterLabel} class="flex flex-wrap gap-2">
+    <button type="button" data-type="all" aria-pressed="true" class={buttonClass}>
+      {copy.all}
+    </button>
+    {types.map((type) => (
+      <button type="button" data-type={type} aria-pressed="false" class={buttonClass}>
+        {projectTypeLabels[lang][type]}
+      </button>
+    ))}
+  </div>
+  <p
+    data-filter-count
+    data-template={copy.shown}
+    aria-live="polite"
+    class="mt-4 text-sm text-muted"
+  >
+    {copy.shown.replace('{count}', String(total))}
+  </p>
+</div>
+
+<script>
+  const filter = document.querySelector<HTMLElement>('[data-project-filter]');
+  const count = document.querySelector<HTMLElement>('[data-filter-count]');
+  const items = [...document.querySelectorAll<HTMLElement>('[data-project-item]')];
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-project-filter] button')];
+
+  if (filter && count && items.length > 0) {
+    const knownTypes = new Set(buttons.map((button) => button.dataset.type));
+
+    const apply = (requested: string) => {
+      const active = knownTypes.has(requested) ? requested : 'all';
+
+      let shown = 0;
+      for (const item of items) {
+        const visible = active === 'all' || item.dataset.type === active;
+        item.hidden = !visible;
+        if (visible) shown += 1;
+      }
+
+      for (const button of buttons) {
+        button.setAttribute('aria-pressed', String(button.dataset.type === active));
+      }
+      count.textContent = (count.dataset.template ?? '{count}').replace('{count}', String(shown));
+
+      const url = new URL(location.href);
+      if (active === 'all') url.searchParams.delete('type');
+      else url.searchParams.set('type', active);
+      history.replaceState(null, '', url);
+    };
+
+    filter.hidden = false;
+    for (const button of buttons) {
+      button.addEventListener('click', () => apply(button.dataset.type ?? 'all'));
+    }
+    apply(new URL(location.href).searchParams.get('type') ?? 'all');
+  }
+</script>

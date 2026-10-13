@@ -1,0 +1,56 @@
+---
+import Button from '../Button.astro';
+import Card from '../Card.astro';
+import Container from '../Container.astro';
+import ProjectCard from '../ProjectCard.astro';
+import ProjectFilter from './ProjectFilter.astro';
+import { site } from '../../config';
+import { homeCopy, projectsCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+import { getProjects } from '../../lib/content';
+import { presentTypes } from '../../lib/content-utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const MIN_TYPES_FOR_FILTER = 2;
+
+const { lang } = Astro.props;
+const copy = projectsCopy[lang].list;
+
+const projects = await getProjects(lang);
+const types = presentTypes(projects);
+const hasConcepts = projects.some((project) => project.data.concept);
+---
+
+<Container class="pt-16 pb-10 md:pt-24">
+  <h1 class="text-5xl md:text-7xl">{copy.title}</h1>
+  <p class="mt-6 max-w-2xl text-lg text-muted md:text-xl">{copy.intro}</p>
+  {hasConcepts && <p class="mt-4 max-w-2xl text-muted">{homeCopy[lang].featured.note}</p>}
+</Container>
+
+<Container class="pb-20 md:pb-28">
+  {projects.length > 0 ? (
+    <>
+      {types.length >= MIN_TYPES_FOR_FILTER && (
+        <ProjectFilter lang={lang} types={types} total={projects.length} />
+      )}
+      <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <li data-project-item data-type={project.data.type}>
+            <ProjectCard entry={project} lang={lang} headingLevel="h2" />
+          </li>
+        ))}
+      </ul>
+    </>
+  ) : (
+    <Card class="max-w-2xl">
+      <h2 class="text-2xl md:text-3xl">{copy.emptyTitle}</h2>
+      <p class="mt-3 text-muted">{copy.emptyText}</p>
+      <div class="mt-6">
+        <Button href={site.calConsultation}>{copy.emptyCta}</Button>
+      </div>
+    </Card>
+  )}
+</Container>

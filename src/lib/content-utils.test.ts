@@ -1,5 +1,62 @@
 import { describe, expect, it } from 'vitest';
-import { isPublished, sortByOrder, splitEntryId } from './content-utils';
+import {
+  isPublished,
+  missingTranslations,
+  nextEntry,
+  presentTypes,
+  sortByOrder,
+  splitEntryId,
+} from './content-utils';
+
+describe('missingTranslations', () => {
+  it('returns nothing when every slug exists in both languages', () => {
+    expect(missingTranslations(['sk/a', 'en/a', 'sk/b', 'en/b'])).toEqual([]);
+  });
+
+  it('returns slugs that exist in only one language', () => {
+    expect(missingTranslations(['sk/a', 'en/a', 'sk/only-sk', 'en/only-en'])).toEqual([
+      'only-en',
+      'only-sk',
+    ]);
+  });
+
+  it('returns an empty list for no ids', () => {
+    expect(missingTranslations([])).toEqual([]);
+  });
+});
+
+describe('presentTypes', () => {
+  const entry = (type: string) => ({ data: { type } });
+
+  it('lists each type once, in order of first appearance', () => {
+    const types = presentTypes([entry('webapp'), entry('website'), entry('webapp')]);
+    expect(types).toEqual(['webapp', 'website']);
+  });
+
+  it('returns an empty list for no entries', () => {
+    expect(presentTypes([])).toEqual([]);
+  });
+});
+
+describe('nextEntry', () => {
+  const entries = [{ id: 'sk/a' }, { id: 'sk/b' }, { id: 'sk/c' }];
+
+  it('returns the following entry', () => {
+    expect(nextEntry(entries, 'sk/a')).toEqual({ id: 'sk/b' });
+  });
+
+  it('wraps around from the last entry to the first', () => {
+    expect(nextEntry(entries, 'sk/c')).toEqual({ id: 'sk/a' });
+  });
+
+  it('returns undefined when there is only one entry', () => {
+    expect(nextEntry([{ id: 'sk/a' }], 'sk/a')).toBeUndefined();
+  });
+
+  it('returns undefined for an unknown id', () => {
+    expect(nextEntry(entries, 'sk/zzz')).toBeUndefined();
+  });
+});
 
 describe('splitEntryId', () => {
   it('splits a collection id into language and slug', () => {

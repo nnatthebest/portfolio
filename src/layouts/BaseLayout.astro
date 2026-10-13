@@ -17,7 +17,8 @@ interface Props {
    * Defaults to the match in the route table; pages outside it (e.g. /styleguide/) get none.
    */
   alternates?: Record<Lang, string>;
-  image?: ImageMetadata;
+  /** Social preview image. Anything with a URL and its pixel size, e.g. `getOgImage()`. */
+  image?: { src: string; width: number; height: number };
   noindex?: boolean;
 }
 

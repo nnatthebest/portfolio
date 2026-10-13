@@ -213,3 +213,97 @@ export const projectTypeLabels: Record<Lang, Record<ProjectType, string>> = {
     mobile: 'Mobile app',
   },
 };
+
+export interface ProjectsCopy {
+  list: {
+    title: string;
+    description: string;
+    intro: string;
+    filterLabel: string;
+    all: string;
+    /** Contains a `{count}` placeholder. */
+    shown: string;
+    emptyTitle: string;
+    emptyText: string;
+    emptyCta: string;
+  };
+  case: {
+    back: string;
+    conceptNotice: string;
+    year: string;
+    client: string;
+    brief: string;
+    solution: string;
+    result: string;
+    ownerGets: string;
+    stack: string;
+    gallery: string;
+    demo: string;
+    code: string;
+    next: string;
+  };
+}
+
+/** Copy for the projects list and case pages. Concept projects carry no invented results. */
+export const projectsCopy: Record<Lang, ProjectsCopy> = {
+  sk: {
+    list: {
+      title: 'Projekty',
+      description: 'Ukážky práce: weby, aplikácie a automatizácie pre malé firmy.',
+      intro: 'Ukážky toho, ako pristupujem k zadaniam malých firiem.',
+      filterLabel: 'Filtrovať podľa typu',
+      all: 'Všetky',
+      shown: 'Zobrazené projekty: {count}',
+      emptyTitle: 'Skutočné projekty pribudnú čoskoro',
+      emptyText:
+        'Zatiaľ pripravujem prvé ukážky. Ak potrebujete web alebo automatizáciu, ozvite sa a vysvetlím vám, ako by som postupoval.',
+      emptyCta: 'Bezplatná konzultácia',
+    },
+    case: {
+      back: '← Všetky projekty',
+      conceptNotice:
+        'Toto je koncept, nie projekt skutočného klienta. Ukazuje, ako by som pristúpil k takémuto zadaniu.',
+      year: 'Rok',
+      client: 'Klient',
+      brief: 'Úloha',
+      solution: 'Riešenie',
+      result: 'Výsledok',
+      ownerGets: 'Čo získa majiteľ',
+      stack: 'Technológie',
+      gallery: 'Galéria',
+      demo: 'Pozrieť demo',
+      code: 'Zdrojový kód',
+      next: 'Ďalší projekt',
+    },
+  },
+  en: {
+    list: {
+      title: 'Projects',
+      description: 'Examples of work: websites, web apps and automations for small businesses.',
+      intro: 'A look at how I approach briefs from small businesses.',
+      filterLabel: 'Filter by type',
+      all: 'All',
+      shown: 'Projects shown: {count}',
+      emptyTitle: 'Real projects are coming soon',
+      emptyText:
+        'I am preparing the first examples. If you need a website or automation, get in touch and I will explain how I would approach it.',
+      emptyCta: 'Free consultation',
+    },
+    case: {
+      back: '← All projects',
+      conceptNotice:
+        'This is a concept, not a real client project. It shows how I would approach a brief like this.',
+      year: 'Year',
+      client: 'Client',
+      brief: 'The brief',
+      solution: 'Solution',
+      result: 'Result',
+      ownerGets: 'What the owner gets',
+      stack: 'Technologies',
+      gallery: 'Gallery',
+      demo: 'View demo',
+      code: 'Source code',
+      next: 'Next project',
+    },
+  },
+};

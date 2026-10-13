@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'vitest';
-import { homeCopy, projectTypeLabels } from './copy';
+import { homeCopy, projectTypeLabels, projectsCopy } from './copy';
+
+describe('projectsCopy', () => {
+  const collect = (value: unknown): string[] => {
+    if (typeof value === 'string') return [value];
+    if (value && typeof value === 'object') return Object.values(value).flatMap(collect);
+    return [];
+  };
+
+  it('has no empty strings in either language', () => {
+    for (const lang of ['sk', 'en'] as const) {
+      const strings = collect(projectsCopy[lang]);
+      expect(strings.length).toBeGreaterThan(0);
+      for (const text of strings) {
+        expect(text.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('has the same keys in both languages', () => {
+    expect(Object.keys(projectsCopy.en.list).sort()).toEqual(
+      Object.keys(projectsCopy.sk.list).sort(),
+    );
+    expect(Object.keys(projectsCopy.en.case).sort()).toEqual(
+      Object.keys(projectsCopy.sk.case).sort(),
+    );
+  });
+
+  it('keeps the {count} placeholder in the shown-projects label', () => {
+    expect(projectsCopy.sk.list.shown).toContain('{count}');
+    expect(projectsCopy.en.list.shown).toContain('{count}');
+  });
+});
 
 const collectStrings = (value: unknown): string[] => {
   if (typeof value === 'string') return [value];

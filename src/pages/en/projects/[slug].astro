@@ -1,0 +1,27 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import ProjectCasePage from '../../../components/projects/ProjectCasePage.astro';
+import { site } from '../../../config';
+import { getLang } from '../../../i18n/ui';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getProjectStaticPaths } from '../../../lib/content';
+import { getOgImage } from '../../../lib/og';
+
+export async function getStaticPaths() {
+  return getProjectStaticPaths('en');
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { entry } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const ogImage = await getOgImage(entry.data.cover);
+---
+
+<BaseLayout
+  title={`${entry.data.title} — ${site.name}`}
+  description={entry.data.summary}
+  image={ogImage}
+>
+  <ProjectCasePage entry={entry} lang={lang} />
+</BaseLayout>

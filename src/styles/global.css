@@ -124,6 +124,47 @@
   border-bottom-width: 1px;
 }
 
+/* Body text rendered from MDX (no typography plugin is installed). */
+.prose-lite > * + * {
+  margin-top: 1rem;
+}
+
+.prose-lite ul,
+.prose-lite ol {
+  padding-left: 1.25rem;
+}
+
+.prose-lite ul {
+  list-style: disc;
+}
+
+.prose-lite ol {
+  list-style: decimal;
+}
+
+.prose-lite li + li {
+  margin-top: 0.5rem;
+}
+
+.prose-lite li::marker {
+  color: var(--muted);
+}
+
+.prose-lite h2,
+.prose-lite h3 {
+  margin-top: 2rem;
+}
+
+.prose-lite a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.prose-lite strong {
+  font-weight: 600;
+}
+
 /* Sections fade in on scroll — CSS only, no parallax, off for reduced motion. */
 @keyframes rise {
   from {
