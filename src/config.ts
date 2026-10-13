@@ -12,3 +12,6 @@ export const site = {
   dic: '3122421654',
   // [TODO: postal address for GDPR and footer — not in docs/brief.md yet]
 } as const;
+
+/** Where the contact form posts. Served by the Pages Function in functions/api/contact.ts. */
+export const CONTACT_ENDPOINT = '/api/contact';

@@ -1,0 +1,17 @@
+# Secrets of the contact form function (functions/api/contact.ts).
+# Copy to .dev.vars for `npm run dev:full`. Never commit .dev.vars.
+# In production set the same names in Cloudflare Pages (Settings → Variables and Secrets,
+# type "Secret") or with `wrangler pages secret put <NAME>`. See docs/contact-form.md.
+
+# Resend API key (https://resend.com/api-keys). Without a real key the function answers 500.
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
+
+# Turnstile SECRET key. The value below is Cloudflare's dummy secret that accepts the dummy site key
+# 1x00000000000000000000AA. Use the real secret of your widget in production.
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+
+# Where visitor messages are delivered.
+CONTACT_TO=daniil@daniilbiiakov.com
+
+# Sender of both emails. The domain must be verified in Resend.
+CONTACT_FROM="Daniil Biiakov <kontakt@daniilbiiakov.com>"

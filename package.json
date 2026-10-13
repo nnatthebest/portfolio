@@ -12,7 +12,8 @@
     "astro": "astro",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "audit": "node scripts/audit.mjs"
+    "audit": "node scripts/audit.mjs",
+    "dev:full": "npm run build && wrangler pages dev dist --compatibility-date=2026-10-06"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.3",
@@ -30,6 +31,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.4"
+    "vitest": "^5.0.4",
+    "wrangler": "^4.150.0"
   }
 }

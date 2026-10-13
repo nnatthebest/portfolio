@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BUDGET_VALUES,
   LIMITS,
+  PROJECT_TYPE_PATTERN,
   buildPayload,
   isHoneypotFilled,
   preselectedType,
@@ -120,6 +121,20 @@ describe('preselectedType', () => {
   });
 });
 
+describe('limits and shared patterns', () => {
+  it('allows messages up to 5000 characters, the same limit the server enforces', () => {
+    expect(LIMITS.messageMax).toBe(5000);
+  });
+
+  it('accepts service ids as project types and rejects anything else', () => {
+    expect(PROJECT_TYPE_PATTERN.test('business-site')).toBe(true);
+    expect(PROJECT_TYPE_PATTERN.test('other')).toBe(true);
+    for (const bad of ['', 'Landing', 'a b', '<script>', 'x'.repeat(41), 'a_b']) {
+      expect(PROJECT_TYPE_PATTERN.test(bad), bad).toBe(false);
+    }
+  });
+});
+
 describe('isHoneypotFilled', () => {
   it('is false for an empty or blank trap field', () => {
     expect(isHoneypotFilled({ ...validValues, website: '' })).toBe(false);
@@ -132,9 +147,9 @@ describe('isHoneypotFilled', () => {
 });
 
 describe('buildPayload', () => {
-  const context = { lang: 'sk', page: '/kontakt/', turnstileToken: 'token-123' } as const;
+  const context = { lang: 'sk', turnstileToken: 'token-123' } as const;
 
-  it('maps the values and context onto the webhook contract', () => {
+  it('maps the values and context onto the API contract', () => {
     expect(buildPayload(validValues, context)).toEqual({
       name: 'Jana Nováková',
       email: 'jana@salon.sk',
@@ -143,7 +158,6 @@ describe('buildPayload', () => {
       message: 'Potrebujem nový web pre salón.',
       consent: true,
       lang: 'sk',
-      page: '/kontakt/',
       turnstileToken: 'token-123',
       website: '',
     });

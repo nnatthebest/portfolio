@@ -7,12 +7,18 @@ export const DEFAULT_BUDGET: BudgetValue = 'unsure';
 /** Project type for requests that fit none of the service packages. */
 export const PROJECT_TYPE_OTHER = 'other';
 
+/**
+ * Shape of a project type (a service id). The server cannot read the services collection,
+ * so it checks the shape instead of a list.
+ */
+export const PROJECT_TYPE_PATTERN = /^[a-z0-9-]{1,40}$/;
+
 export const LIMITS = {
   nameMin: 2,
   nameMax: 100,
   emailMax: 254,
   messageMin: 10,
-  messageMax: 2000,
+  messageMax: 5000,
 } as const;
 
 export interface ContactValues {
@@ -30,7 +36,7 @@ export type ContactField = 'name' | 'email' | 'projectType' | 'budget' | 'messag
 export type ContactErrorCode = 'required' | 'tooShort' | 'tooLong' | 'invalid';
 export type ContactErrors = Partial<Record<ContactField, ContactErrorCode>>;
 
-/** JSON body sent to the n8n webhook. The Turnstile token is verified there, never on the client. */
+/** JSON body sent to /api/contact. The Turnstile token is verified there, on the server, never in the browser. */
 export interface ContactPayload {
   name: string;
   email: string;
@@ -39,7 +45,6 @@ export interface ContactPayload {
   message: string;
   consent: boolean;
   lang: Lang;
-  page: string;
   turnstileToken: string;
   website: string;
 }
@@ -101,8 +106,6 @@ export function isHoneypotFilled(values: Pick<ContactValues, 'website'>): boolea
 
 export interface PayloadContext {
   lang: Lang;
-  /** Path of the page the form was sent from. */
-  page: string;
   turnstileToken: string;
 }
 
@@ -115,7 +118,6 @@ export function buildPayload(values: ContactValues, context: PayloadContext): Co
     message: values.message.trim(),
     consent: values.consent,
     lang: context.lang,
-    page: context.page,
     turnstileToken: context.turnstileToken,
     website: values.website,
   };

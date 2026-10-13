@@ -52,7 +52,7 @@ export const privacyCopy: Record<Lang, PrivacyCopy> = {
       {
         heading: 'Komu údaje ďalej sprístupňujem',
         body: [
-          'Správu prijíma automatizačný nástroj n8n ([TODO: kde je n8n hostovaný]). Údaje sa ukladajú do tabuľky Google Sheets a upozornenia idú e-mailom ([TODO: poskytovateľ e-mailu]).',
+          'Správu prijíma serverová funkcia na platforme Cloudflare Pages a e-mailom ju doručuje služba Resend. Údaje nikam inam neukladám, zostanú v mojej e-mailovej schránke. [TODO: doplniť poskytovateľa e-mailovej schránky a overiť podmienky spracovania u Cloudflare a Resend]',
           'Kalendár Cal.com sa načíta až po kliknutí na tlačidlo. Rezerváciu potom spracúva spoločnosť Cal.com podľa vlastných zásad.',
         ],
       },
@@ -108,7 +108,7 @@ export const privacyCopy: Record<Lang, PrivacyCopy> = {
       {
         heading: 'Who else receives your data',
         body: [
-          'Your message is received by the n8n automation tool ([TODO: where n8n is hosted]). The data is stored in a Google Sheets spreadsheet and notifications are sent by email ([TODO: email provider]).',
+          'Your message is received by a server function on Cloudflare Pages and delivered by email through the Resend service. I do not store the data anywhere else; it stays in my mailbox. [TODO: add the mailbox provider and check the processing terms of Cloudflare and Resend]',
           'The Cal.com calendar loads only after you click the button. Cal.com then processes the booking under its own policy.',
         ],
       },

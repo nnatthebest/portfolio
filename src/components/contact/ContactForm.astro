@@ -2,7 +2,7 @@
 import Button from '../Button.astro';
 import Card from '../Card.astro';
 import FormField from './FormField.astro';
-import { site } from '../../config';
+import { CONTACT_ENDPOINT, site } from '../../config';
 import { contactCopy } from '../../i18n/copy';
 import { route, type Lang } from '../../i18n/ui';
 import { getServices } from '../../lib/content';
@@ -21,9 +21,9 @@ interface Props {
 const { lang } = Astro.props;
 const copy = contactCopy[lang];
 
-const endpoint = import.meta.env.PUBLIC_N8N_WEBHOOK_URL;
+const endpoint = CONTACT_ENDPOINT;
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
-const isConfigured = Boolean(endpoint && siteKey);
+const isConfigured = Boolean(siteKey);
 
 const services = await getServices(lang);
 const projectTypes = [
@@ -266,8 +266,8 @@ const linkClass = 'text-accent-text underline decoration-1 underline-offset-4 ho
   const REQUEST_TIMEOUT_MS = 15_000;
   const TOKEN_WAIT_MS = 10_000;
   const TOKEN_POLL_MS = 150;
-  // n8n answers 400/403 when it rejects the Turnstile token.
-  const VERIFICATION_STATUSES = new Set([400, 403]);
+  // The API answers 403 when it rejects the Turnstile token; 400 means a data error.
+  const VERIFICATION_STATUSES = new Set([403]);
 
   class SubmitFailure extends Error {
     kind: FailureKind;
@@ -464,7 +464,6 @@ const linkClass = 'text-accent-text underline decoration-1 underline-offset-4 ho
 
         const payload = buildPayload(values, {
           lang,
-          page: location.pathname,
           turnstileToken,
         });
         const response = await send(payload);

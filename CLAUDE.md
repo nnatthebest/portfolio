@@ -13,8 +13,8 @@ The owner talks to you in Russian. Site content is Slovak (default) and English.
 - `astro:assets` `<Image>` for all raster images; astro-icon + Lucide for icons
 - @astrojs/sitemap, JSON-LD, hreflang
 - Vanilla JS in component `<script>` tags. No React/Vue/Svelte unless I explicitly approve it.
-- Contact form posts JSON to an n8n webhook (`PUBLIC_N8N_WEBHOOK_URL`), Cloudflare Turnstile + honeypot
-- Hosting: Cloudflare Pages (`npm run build` → `dist`)
+- Contact form posts JSON to a Cloudflare Pages Function (`functions/api/contact.ts` → `/api/contact`, same origin, site stays static). The function checks the honeypot and validates the data, verifies the Cloudflare Turnstile token on the server (`TURNSTILE_SECRET_KEY`) and sends two emails through the Resend REST API (`RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`): a notification to the owner and an auto-reply to the visitor. Only the Turnstile site key is public (`PUBLIC_TURNSTILE_SITE_KEY`). Details in `docs/contact-form.md`.
+- Hosting: Cloudflare Pages (`npm run build` → `dist`, `functions/` deployed alongside). Local full stack: `npm run dev:full`.
 
 Install the latest stable versions via official CLIs. Don't pin versions from memory; if an API seems to have changed, check the installed package's docs/types instead of guessing.
 
@@ -44,7 +44,7 @@ src/
   styles/global.css
 docs/
   brief.md           owner's brand, contacts, cases, prices (source of truth for copy)
-  n8n-workflow.md    form → n8n workflow description
+  contact-form.md    contact form: Pages Function + Resend, secrets, testing
 ```
 
 ## Routes (sk / en)
@@ -86,7 +86,7 @@ The language switch must link to the equivalent page, not to the home page. A ca
 - Accessibility: semantic HTML, one `h1` per page, visible focus states, labels on all form fields, WCAG AA contrast, respect `prefers-reduced-motion`.
 - SEO: unique title/description per page and language, canonical + hreflang (incl. `x-default` → sk), JSON-LD where relevant.
 - No cookies/trackers that require consent. Analytics only cookieless (Cloudflare Web Analytics or Plausible).
-- Secrets only in `.env` (gitignored); keep `.env.example` up to date. Only `PUBLIC_*` vars may reach the client.
+- Secrets only in `.env` / `.dev.vars` (gitignored) and in Cloudflare Pages settings; keep `.env.example` and `.dev.vars.example` up to date. Only `PUBLIC_*` vars may reach the client.
 - Reuse components; don't duplicate markup between sk and en pages — pages are thin wrappers that pass `lang` to shared components.
 - Keep changes scoped to the task. Don't refactor unrelated code without asking.
 
@@ -95,4 +95,4 @@ The language switch must link to the equivalent page, not to the home page. A ca
 1. `npm run build` and `npx astro check` pass with no errors or warnings you introduced.
 2. Both languages updated.
 3. Checked at mobile and desktop width (describe what you checked).
-4. Short summary of what changed and anything I must do manually (env vars, n8n, DNS).
+4. Short summary of what changed and anything I must do manually (env vars, secrets, DNS).
