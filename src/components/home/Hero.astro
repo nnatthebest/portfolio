@@ -1,0 +1,36 @@
+---
+import Button from '../Button.astro';
+import Container from '../Container.astro';
+import Monogram from '../Monogram.astro';
+import { site } from '../../config';
+import { homeCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = homeCopy[lang].hero;
+---
+
+<Container class="py-16 md:py-28">
+  <div class="grid items-center gap-12 md:grid-cols-[1fr_auto]">
+    <div>
+      <p class="mb-5 text-sm font-medium tracking-wide text-muted">{copy.eyebrow}</p>
+      <h1 class="max-w-3xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl">{copy.title}</h1>
+      <p class="mt-6 max-w-xl text-lg text-muted md:text-xl">{copy.lead}</p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <Button href={site.calConsultation}>{copy.primaryCta}</Button>
+        <Button href="#services" variant="secondary">
+          {copy.secondaryCta}
+        </Button>
+      </div>
+      <p class="mt-8 text-sm text-muted">{copy.languages}</p>
+    </div>
+    <!-- Monogram stands in for a photo; swap this block for an <Image> later. -->
+    <div class="hidden text-fg md:block" aria-hidden="true">
+      <Monogram size={200} />
+    </div>
+  </div>
+</Container>

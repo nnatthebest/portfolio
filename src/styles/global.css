@@ -141,7 +141,8 @@
     .reveal {
       animation: rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 30%;
+      /* Fixed distance, not a percentage: tall sections must not stay faded for hundreds of px. */
+      animation-range: entry 0px entry 160px;
     }
   }
 }

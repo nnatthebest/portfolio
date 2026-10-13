@@ -1,0 +1,56 @@
+---
+import Section from '../Section.astro';
+import { site } from '../../config';
+import { homeCopy } from '../../i18n/copy';
+import { t, type Lang } from '../../i18n/ui';
+import { buildFaqJsonLd, serializeJsonLd } from '../../lib/faq-jsonld';
+
+interface Props {
+  lang: Lang;
+  number: string;
+}
+
+const { lang, number } = Astro.props;
+const copy = homeCopy[lang].faq;
+const jsonLd = serializeJsonLd(buildFaqJsonLd(copy.items));
+---
+
+<Section id="faq" number={number} heading={copy.heading}>
+  <div class="max-w-3xl divide-y divide-line border-y border-line">
+    {copy.items.map((item) => (
+      <details class="group">
+        <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-medium [&::-webkit-details-marker]:hidden">
+          {item.question}
+          <svg
+            class="shrink-0 transition-transform duration-150 group-open:rotate-45"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M10 4v12M4 10h12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </summary>
+        <p class="max-w-2xl pb-5 text-muted">{item.answer}</p>
+      </details>
+    ))}
+  </div>
+  <p class="mt-8 text-muted">
+    {copy.moreQuestions}{' '}
+    <a
+      href={site.calQuickCall}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-accent-text underline decoration-1 underline-offset-4 hover:decoration-2"
+    >
+      {t(lang, 'footerQuickCall')}
+    </a>
+  </p>
+  <script is:inline type="application/ld+json" set:html={jsonLd} />
+</Section>

@@ -1,0 +1,42 @@
+---
+import Faq from './Faq.astro';
+import FeaturedProjects from './FeaturedProjects.astro';
+import FinalCta from './FinalCta.astro';
+import Hero from './Hero.astro';
+import HowIWork from './HowIWork.astro';
+import Services from './Services.astro';
+import Testimonials from './Testimonials.astro';
+import { testimonials } from '../../data/testimonials';
+import type { Lang } from '../../i18n/ui';
+import { getProjects, getServices } from '../../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const MAX_FEATURED = 3;
+const featured = (await getProjects(lang))
+  .filter((project) => project.data.featured)
+  .slice(0, MAX_FEATURED);
+const services = await getServices(lang);
+
+// Sections without data are hidden, so numbers are assigned to the ones that render.
+const sectionKeys = [
+  featured.length > 0 ? 'projects' : undefined,
+  'services',
+  'how',
+  testimonials.length > 0 ? 'testimonials' : undefined,
+  'faq',
+].filter((key): key is string => key !== undefined);
+const numberOf = (key: string) => String(sectionKeys.indexOf(key) + 1).padStart(2, '0');
+---
+
+<Hero lang={lang} />
+<FeaturedProjects lang={lang} number={numberOf('projects')} projects={featured} />
+<Services lang={lang} number={numberOf('services')} services={services} />
+<HowIWork lang={lang} number={numberOf('how')} />
+<Testimonials lang={lang} number={numberOf('testimonials')} items={testimonials} />
+<Faq lang={lang} number={numberOf('faq')} />
+<FinalCta lang={lang} />

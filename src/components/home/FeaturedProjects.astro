@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectCard from '../ProjectCard.astro';
+import Section from '../Section.astro';
+import { homeCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  number: string;
+  projects: readonly CollectionEntry<'projects'>[];
+}
+
+const { lang, number, projects } = Astro.props;
+const copy = homeCopy[lang].featured;
+const hasConcepts = projects.some((project) => project.data.concept);
+---
+
+{projects.length > 0 && (
+  <Section id="projects" number={number} heading={copy.heading}>
+    {hasConcepts && <p class="-mt-6 mb-10 max-w-2xl text-muted">{copy.note}</p>}
+    <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project) => (
+        <li>
+          <ProjectCard entry={project} lang={lang} />
+        </li>
+      ))}
+    </ul>
+  </Section>
+)}

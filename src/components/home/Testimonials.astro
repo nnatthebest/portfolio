@@ -1,0 +1,36 @@
+---
+import Card from '../Card.astro';
+import Section from '../Section.astro';
+import type { Testimonial } from '../../data/testimonials';
+import { homeCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  number: string;
+  items: readonly Testimonial[];
+}
+
+const { lang, number, items } = Astro.props;
+const copy = homeCopy[lang].testimonials;
+---
+
+{items.length > 0 && (
+  <Section id="testimonials" number={number} heading={copy.heading}>
+    <ul class="grid gap-6 md:grid-cols-2">
+      {items.map((item) => (
+        <li>
+          <Card class="h-full">
+            <blockquote>
+              <p class="text-lg">{item.quote[lang]}</p>
+              <footer class="mt-4 text-sm text-muted">
+                {item.author}
+                {item.role && `, ${item.role}`}
+              </footer>
+            </blockquote>
+          </Card>
+        </li>
+      ))}
+    </ul>
+  </Section>
+)}

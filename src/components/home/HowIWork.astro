@@ -1,0 +1,27 @@
+---
+import Section from '../Section.astro';
+import { homeCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  number: string;
+}
+
+const { lang, number } = Astro.props;
+const copy = homeCopy[lang].how;
+---
+
+<Section id="how" number={number} heading={copy.heading}>
+  <ol class="grid gap-8 md:grid-cols-4">
+    {copy.steps.map((step, index) => (
+      <li class="border-t border-fg pt-5">
+        <span class="text-sm font-medium text-muted tabular-nums">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <h3 class="mt-2 text-xl">{step.title}</h3>
+        <p class="mt-2 text-muted">{step.text}</p>
+      </li>
+    ))}
+  </ol>
+</Section>

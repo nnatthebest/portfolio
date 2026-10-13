@@ -1,0 +1,24 @@
+---
+import Button from '../Button.astro';
+import Section from '../Section.astro';
+import { site } from '../../config';
+import { homeCopy } from '../../i18n/copy';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = homeCopy[lang].cta;
+---
+
+<Section id="cta" heading={copy.heading}>
+  <p class="-mt-6 max-w-2xl text-lg text-muted">{copy.text}</p>
+  <div class="mt-8 flex flex-wrap gap-3">
+    <Button href={site.calConsultation}>{copy.primary}</Button>
+    <Button href={`mailto:${site.email}`} variant="secondary">
+      {copy.secondary}
+    </Button>
+  </div>
+</Section>

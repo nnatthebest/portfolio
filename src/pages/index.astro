@@ -1,5 +1,5 @@
 ---
-import HomePlaceholder from '../components/home/HomePlaceholder.astro';
+import HomePage from '../components/home/HomePage.astro';
 import { site } from '../config';
 import { getLang, t } from '../i18n/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -8,5 +8,5 @@ const lang = getLang(Astro.currentLocale);
 ---
 
 <BaseLayout title={site.name} description={t(lang, 'tagline')}>
-  <HomePlaceholder lang={lang} />
+  <HomePage lang={lang} />
 </BaseLayout>

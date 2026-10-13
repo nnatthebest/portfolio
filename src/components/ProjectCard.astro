@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Card from './Card.astro';
+import { homeCopy, projectTypeLabels } from '../i18n/copy';
+import { projectPath, type Lang } from '../i18n/ui';
+import { splitEntryId } from '../lib/content-utils';
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+  lang: Lang;
+}
+
+const { entry, lang } = Astro.props;
+const { data } = entry;
+const { slug } = splitEntryId(entry.id);
+
+const typeLabel = projectTypeLabels[lang][data.type];
+const label = data.concept ? `${homeCopy[lang].featured.conceptLabel} · ${typeLabel}` : typeLabel;
+---
+
+<Card href={projectPath(lang, slug)} class="h-full">
+  <div class="flex h-full flex-col gap-4">
+    <Image
+      src={data.cover}
+      alt={data.title}
+      widths={[400, 800]}
+      sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
+      class="aspect-[8/5] w-full rounded-ui border border-line object-cover"
+    />
+    <p class="text-sm font-medium text-muted">{label}</p>
+    <h3 class="text-2xl">{data.title}</h3>
+    <p class="text-muted">{data.problem}</p>
+    <ul class="mt-auto flex flex-wrap gap-2 pt-2">
+      {data.stack.map((item) => (
+        <li class="rounded-ui border border-line px-2.5 py-1 text-sm text-muted">{item}</li>
+      ))}
+    </ul>
+  </div>
+</Card>
