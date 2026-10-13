@@ -1,0 +1,483 @@
+---
+import Button from '../Button.astro';
+import Card from '../Card.astro';
+import FormField from './FormField.astro';
+import { site } from '../../config';
+import { contactCopy } from '../../i18n/copy';
+import { route, type Lang } from '../../i18n/ui';
+import { getServices } from '../../lib/content';
+import { splitEntryId } from '../../lib/content-utils';
+import {
+  BUDGET_VALUES,
+  DEFAULT_BUDGET,
+  LIMITS,
+  PROJECT_TYPE_OTHER,
+} from '../../lib/contact-validation';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = contactCopy[lang];
+
+const endpoint = import.meta.env.PUBLIC_N8N_WEBHOOK_URL;
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const isConfigured = Boolean(endpoint && siteKey);
+
+const services = await getServices(lang);
+const projectTypes = [
+  ...services.map((service) => ({
+    value: splitEntryId(service.id).slug,
+    label: service.data.title,
+  })),
+  { value: PROJECT_TYPE_OTHER, label: copy.form.projectTypeOther },
+];
+
+// Strings the client script needs, so it carries no copy of its own.
+const clientCopy = JSON.stringify({
+  errors: copy.errors,
+  states: copy.states,
+  submit: copy.form.submit,
+  submitting: copy.form.submitting,
+});
+
+const controlClass =
+  'block w-full min-h-11 rounded-ui border border-line bg-bg px-3 py-2 text-base text-fg aria-[invalid=true]:border-accent-text';
+const linkClass = 'text-accent-text underline decoration-1 underline-offset-4 hover:decoration-2';
+---
+
+{isConfigured ? (
+  <>
+    <noscript>
+      <p class="mb-6 rounded-ui border border-line p-4 text-sm">
+        {copy.form.noscript}{' '}
+        <a href={`mailto:${site.email}`} class={linkClass}>
+          {site.email}
+        </a>
+      </p>
+    </noscript>
+
+    <form
+      data-contact-form
+      data-state="idle"
+      data-endpoint={endpoint}
+      data-sitekey={siteKey}
+      data-lang={lang}
+      data-thanks={route(lang, 'thankYou')}
+      data-types={projectTypes.map((type) => type.value).join(',')}
+      data-copy={clientCopy}
+      novalidate
+      class="relative space-y-6"
+    >
+      <div
+        role="alert"
+        tabindex="-1"
+        data-form-summary
+        hidden
+        class="rounded-ui border border-accent-text p-4 text-sm"
+      />
+
+      <FormField id="name" label={copy.form.nameLabel} requiredLabel={copy.form.required}>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          maxlength={LIMITS.nameMax}
+          aria-describedby="name-error"
+          class={controlClass}
+        />
+      </FormField>
+
+      <FormField id="email" label={copy.form.emailLabel} requiredLabel={copy.form.required}>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          required
+          maxlength={LIMITS.emailMax}
+          aria-describedby="email-error"
+          class={controlClass}
+        />
+      </FormField>
+
+      <FormField
+        id="projectType"
+        label={copy.form.projectTypeLabel}
+        requiredLabel={copy.form.required}
+      >
+        <select
+          id="projectType"
+          name="projectType"
+          required
+          aria-describedby="projectType-error"
+          class={controlClass}
+        >
+          <option value="">{copy.form.projectTypePlaceholder}</option>
+          {projectTypes.map((type) => (
+            <option value={type.value}>{type.label}</option>
+          ))}
+        </select>
+      </FormField>
+
+      <FormField id="budget" label={copy.form.budgetLabel}>
+        <select id="budget" name="budget" aria-describedby="budget-error" class={controlClass}>
+          {BUDGET_VALUES.map((value) => (
+            <option value={value} selected={value === DEFAULT_BUDGET}>
+              {copy.budget[value]}
+            </option>
+          ))}
+        </select>
+      </FormField>
+
+      <FormField
+        id="message"
+        label={copy.form.messageLabel}
+        requiredLabel={copy.form.required}
+        hint={copy.form.messageHint}
+      >
+        <textarea
+          id="message"
+          name="message"
+          rows="6"
+          required
+          maxlength={LIMITS.messageMax}
+          aria-describedby="message-hint message-error"
+          class={controlClass}
+        />
+      </FormField>
+
+      <!-- Honeypot: invisible to people, tempting to bots. Never reaches the webhook when filled. -->
+      <div aria-hidden="true" class="absolute -left-[9999px] size-px overflow-hidden">
+        <label>
+          Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <div>
+        <label class="flex items-start gap-3 text-sm">
+          <input
+            id="consent"
+            name="consent"
+            type="checkbox"
+            required
+            aria-describedby="consent-error"
+            class="mt-0.5 size-5 shrink-0 accent-[var(--accent-text)]"
+          />
+          <span>
+            {copy.form.consentBefore}
+            <a href={route(lang, 'privacy')} target="_blank" rel="noopener" class={linkClass}>
+              {copy.form.consentLink}
+            </a>
+            {copy.form.consentAfter}
+          </span>
+        </label>
+        <p
+          id="consent-error"
+          data-error-for="consent"
+          class="mt-1.5 text-sm text-accent-text"
+          hidden
+        />
+      </div>
+
+      <!-- Cloudflare Turnstile renders here. Its script loads on the first touch of the form. -->
+      <div data-turnstile></div>
+
+      <p role="status" data-form-status hidden class="rounded-ui border border-line p-4 text-sm" />
+
+      <Button type="submit" data-submit>
+        {copy.form.submit}
+      </Button>
+    </form>
+  </>
+) : (
+  <Card>
+    <h3 class="text-xl">{copy.unavailable.title}</h3>
+    <p class="mt-2 text-muted">
+      {copy.unavailable.text}{' '}
+      <a href={`mailto:${site.email}`} class={linkClass}>
+        {site.email}
+      </a>
+    </p>
+  </Card>
+)}
+
+<script>
+  import {
+    buildPayload,
+    isHoneypotFilled,
+    validateContact,
+    type ContactErrorCode,
+    type ContactErrors,
+    type ContactField,
+    type ContactValues,
+  } from '../../lib/contact-validation';
+  import type { Lang } from '../../i18n/ui';
+
+  interface FormCopy {
+    errors: Record<ContactErrorCode, string> & {
+      emailInvalid: string;
+      consent: string;
+      summary: string;
+    };
+    states: { error: string; verification: string; timeout: string; success: string };
+    submit: string;
+    submitting: string;
+  }
+
+  interface TurnstileOptions {
+    sitekey: string;
+    appearance: 'interaction-only';
+    theme: 'auto';
+    callback: (token: string) => void;
+    'error-callback': () => void;
+    'expired-callback': () => void;
+  }
+
+  interface TurnstileApi {
+    render: (container: HTMLElement, options: TurnstileOptions) => string;
+    reset: (widgetId?: string) => void;
+  }
+
+  declare global {
+    interface Window {
+      turnstile?: TurnstileApi;
+    }
+  }
+
+  type FormState = 'idle' | 'loading' | 'error' | 'success';
+  type FailureKind = 'error' | 'verification' | 'timeout';
+
+  const FIELDS: readonly ContactField[] = [
+    'name',
+    'email',
+    'projectType',
+    'budget',
+    'message',
+    'consent',
+  ];
+  const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  const REQUEST_TIMEOUT_MS = 15_000;
+  const TOKEN_WAIT_MS = 10_000;
+  const TOKEN_POLL_MS = 150;
+  // n8n answers 400/403 when it rejects the Turnstile token.
+  const VERIFICATION_STATUSES = new Set([400, 403]);
+
+  class SubmitFailure extends Error {
+    kind: FailureKind;
+
+    constructor(kind: FailureKind) {
+      super(kind);
+      this.kind = kind;
+    }
+  }
+
+  function initContactForm(form: HTMLFormElement) {
+    const copy = JSON.parse(form.dataset.copy ?? '{}') as FormCopy;
+    const endpoint = form.dataset.endpoint ?? '';
+    const siteKey = form.dataset.sitekey ?? '';
+    const lang: Lang = form.dataset.lang === 'en' ? 'en' : 'sk';
+    const thanksUrl = form.dataset.thanks ?? '/';
+    const allowedTypes = (form.dataset.types ?? '').split(',');
+
+    const summary = form.querySelector<HTMLElement>('[data-form-summary]');
+    const status = form.querySelector<HTMLElement>('[data-form-status]');
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const turnstileContainer = form.querySelector<HTMLElement>('[data-turnstile]');
+    if (!summary || !status || !submit || !turnstileContainer) return;
+
+    let turnstileLoad: Promise<void> | undefined;
+    let widgetId: string | undefined;
+    let token = '';
+
+    const loadTurnstile = (): Promise<void> => {
+      turnstileLoad ??= new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = TURNSTILE_SRC;
+        script.async = true;
+        script.onload = () => {
+          const api = window.turnstile;
+          if (!api) {
+            reject(new Error('turnstile-missing'));
+            return;
+          }
+          widgetId = api.render(turnstileContainer, {
+            sitekey: siteKey,
+            appearance: 'interaction-only',
+            theme: 'auto',
+            callback: (value) => {
+              token = value;
+            },
+            'error-callback': () => {
+              token = '';
+            },
+            'expired-callback': () => {
+              token = '';
+            },
+          });
+          resolve();
+        };
+        script.onerror = () => reject(new Error('turnstile-load'));
+        document.head.appendChild(script);
+      }).catch((error: unknown) => {
+        turnstileLoad = undefined; // allow a retry on the next submit
+        throw error;
+      });
+      return turnstileLoad;
+    };
+
+    const waitForToken = async (): Promise<string> => {
+      const deadline = Date.now() + TOKEN_WAIT_MS;
+      while (!token && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, TOKEN_POLL_MS));
+      }
+      return token;
+    };
+
+    const resetTurnstile = () => {
+      token = '';
+      window.turnstile?.reset(widgetId);
+    };
+
+    const setState = (next: FormState, message = '') => {
+      form.dataset.state = next;
+      form.setAttribute('aria-busy', String(next === 'loading'));
+      submit.disabled = next === 'loading' || next === 'success';
+      submit.textContent = next === 'loading' ? copy.submitting : copy.submit;
+      status.hidden = message === '';
+      status.textContent = message;
+    };
+
+    const readValues = (): ContactValues => {
+      const data = new FormData(form);
+      const text = (key: string) => String(data.get(key) ?? '');
+      return {
+        name: text('name'),
+        email: text('email'),
+        projectType: text('projectType'),
+        budget: text('budget'),
+        message: text('message'),
+        consent: data.get('consent') !== null,
+        website: text('website'),
+      };
+    };
+
+    const errorMessage = (field: ContactField, code: ContactErrorCode): string => {
+      if (field === 'consent') return copy.errors.consent;
+      if (field === 'email' && code === 'invalid') return copy.errors.emailInvalid;
+      return copy.errors[code];
+    };
+
+    const control = (field: ContactField) => form.querySelector<HTMLElement>(`#${field}`);
+    const errorSlot = (field: ContactField) =>
+      form.querySelector<HTMLElement>(`[data-error-for="${field}"]`);
+
+    const showFieldError = (field: ContactField, code: ContactErrorCode | undefined) => {
+      const slot = errorSlot(field);
+      const input = control(field);
+      if (!slot || !input) return;
+
+      slot.textContent = code ? errorMessage(field, code) : '';
+      slot.hidden = !code;
+      if (code) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    };
+
+    const showErrors = (errors: ContactErrors) => {
+      for (const field of FIELDS) showFieldError(field, errors[field]);
+
+      const firstInvalid = FIELDS.find((field) => errors[field]);
+      summary.hidden = !firstInvalid;
+      summary.textContent = firstInvalid ? copy.errors.summary : '';
+      if (firstInvalid) control(firstInvalid)?.focus();
+    };
+
+    const send = async (body: unknown): Promise<Response> => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+      try {
+        return await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+      } catch {
+        throw new SubmitFailure(controller.signal.aborted ? 'timeout' : 'error');
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    // Warm up the spam check as soon as someone touches the form, not on page load.
+    form.addEventListener(
+      'focusin',
+      () => {
+        // A failed load is retried, and reported, when the form is submitted.
+        loadTurnstile().catch(() => undefined);
+      },
+      { once: true },
+    );
+
+    // Typing into a field clears its own error.
+    form.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const field = FIELDS.find((name) => name === target.id);
+      if (field) showFieldError(field, undefined);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (form.dataset.state === 'loading') return;
+
+      const values = readValues();
+
+      // Bots fill the trap field: look successful, send nothing.
+      if (isHoneypotFilled(values)) {
+        location.assign(thanksUrl);
+        return;
+      }
+
+      const errors = validateContact(values, allowedTypes);
+      showErrors(errors);
+      if (Object.keys(errors).length > 0) return;
+
+      setState('loading');
+      try {
+        await loadTurnstile().catch(() => {
+          throw new SubmitFailure('verification');
+        });
+        const turnstileToken = await waitForToken();
+        if (!turnstileToken) throw new SubmitFailure('verification');
+
+        const payload = buildPayload(values, {
+          lang,
+          page: location.pathname,
+          turnstileToken,
+        });
+        const response = await send(payload);
+        if (!response.ok) {
+          throw new SubmitFailure(
+            VERIFICATION_STATUSES.has(response.status) ? 'verification' : 'error',
+          );
+        }
+
+        setState('success', copy.states.success);
+        location.assign(thanksUrl);
+      } catch (error) {
+        resetTurnstile();
+        const kind: FailureKind = error instanceof SubmitFailure ? error.kind : 'error';
+        setState('error', copy.states[kind]);
+      }
+    });
+  }
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) initContactForm(form);
+</script>

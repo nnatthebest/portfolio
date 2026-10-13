@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
+// Pages that must not appear in the sitemap: internal, or noindex.
+const HIDDEN_FROM_SITEMAP = ['/styleguide', '/dakujem', '/thank-you'];
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://daniilbiiakov.com',
@@ -19,5 +22,8 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/styleguide') })],
+  integrations: [
+    mdx(),
+    sitemap({ filter: (page) => !HIDDEN_FROM_SITEMAP.some((path) => page.includes(path)) }),
+  ],
 });

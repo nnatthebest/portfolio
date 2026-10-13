@@ -1,0 +1,31 @@
+---
+import Container from './Container.astro';
+import { privacyCopy } from '../i18n/privacy';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = privacyCopy[lang];
+---
+
+<Container class="py-16 md:py-24">
+  <div class="max-w-3xl">
+    <h1 class="text-5xl md:text-6xl">{copy.title}</h1>
+    <p class="mt-4 text-sm font-medium text-accent-text">{copy.draftNote}</p>
+    <p class="mt-6 text-lg text-muted">{copy.intro}</p>
+
+    {copy.sections.map((section) => (
+      <section class="mt-12">
+        <h2 class="text-2xl md:text-3xl">{section.heading}</h2>
+        <div class="mt-4 space-y-3">
+          {section.body.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Container>

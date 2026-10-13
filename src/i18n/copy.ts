@@ -1,3 +1,4 @@
+import type { BudgetValue } from '../lib/contact-validation';
 import type { Lang } from './ui';
 
 export interface Step {
@@ -304,6 +305,205 @@ export const projectsCopy: Record<Lang, ProjectsCopy> = {
       demo: 'View demo',
       code: 'Source code',
       next: 'Next project',
+    },
+  },
+};
+
+export interface ContactCopy {
+  page: {
+    title: string;
+    description: string;
+    intro: string;
+    directHeading: string;
+    emailLabel: string;
+    whatsappLabel: string;
+    linkedinLabel: string;
+  };
+  form: {
+    heading: string;
+    required: string;
+    nameLabel: string;
+    emailLabel: string;
+    projectTypeLabel: string;
+    projectTypePlaceholder: string;
+    projectTypeOther: string;
+    budgetLabel: string;
+    messageLabel: string;
+    messageHint: string;
+    consentBefore: string;
+    consentLink: string;
+    consentAfter: string;
+    submit: string;
+    submitting: string;
+    noscript: string;
+  };
+  errors: {
+    required: string;
+    tooShort: string;
+    tooLong: string;
+    invalid: string;
+    emailInvalid: string;
+    consent: string;
+    summary: string;
+  };
+  states: { error: string; verification: string; timeout: string; success: string };
+  unavailable: { title: string; text: string };
+  budget: Record<BudgetValue, string>;
+  cal: { heading: string; text: string; button: string; loading: string; fallback: string };
+  thanks: {
+    title: string;
+    description: string;
+    heading: string;
+    text: string;
+    home: string;
+    book: string;
+  };
+}
+
+/** Contact page, form and thank-you copy. Budget ranges are orientation points based on the brief's packages. */
+export const contactCopy: Record<Lang, ContactCopy> = {
+  sk: {
+    page: {
+      title: 'Kontakt',
+      description: 'Napíšte mi o svojom projekte alebo si rovno dohodnite bezplatnú konzultáciu.',
+      intro:
+        'Napíšte, čo potrebujete, a ozvem sa vám e-mailom. Ak chcete, môžete si rovno vybrať termín hovoru.',
+      directHeading: 'Alebo priamo',
+      emailLabel: 'E-mail',
+      whatsappLabel: 'WhatsApp',
+      linkedinLabel: 'LinkedIn',
+    },
+    form: {
+      heading: 'Napíšte mi',
+      required: 'povinné',
+      nameLabel: 'Meno',
+      emailLabel: 'E-mail',
+      projectTypeLabel: 'Typ projektu',
+      projectTypePlaceholder: 'Vyberte možnosť',
+      projectTypeOther: 'Iné',
+      budgetLabel: 'Orientačný rozpočet',
+      messageLabel: 'Správa',
+      messageHint: 'Stačí pár viet: čo potrebujete a dokedy.',
+      consentBefore:
+        'Súhlasím so spracovaním osobných údajov na účely odpovede na moju správu. Viac v ',
+      consentLink: 'zásadách ochrany údajov',
+      consentAfter: '.',
+      submit: 'Odoslať správu',
+      submitting: 'Odosielam…',
+      noscript: 'Na odoslanie formulára je potrebný JavaScript. Napíšte mi radšej na e-mail.',
+    },
+    errors: {
+      required: 'Vyplňte toto pole.',
+      tooShort: 'Text je príliš krátky.',
+      tooLong: 'Text je príliš dlhý.',
+      invalid: 'Vyberte jednu z možností.',
+      emailInvalid: 'Zadajte e-mail v tvare meno@domena.sk.',
+      consent: 'Na odoslanie je potrebný váš súhlas.',
+      summary: 'Opravte prosím označené polia.',
+    },
+    states: {
+      error: 'Správu sa nepodarilo odoslať. Skúste to prosím znova alebo mi napíšte na e-mail.',
+      verification: 'Overenie proti spamu zlyhalo. Skúste to prosím znova.',
+      timeout: 'Odpoveď trvá príliš dlho. Skúste to prosím znova alebo mi napíšte na e-mail.',
+      success: 'Ďakujem, správa je odoslaná.',
+    },
+    unavailable: {
+      title: 'Formulár je dočasne nedostupný',
+      text: 'Napíšte mi prosím priamo na e-mail.',
+    },
+    budget: {
+      'lt-300': 'Do 300 €',
+      '300-700': '300 – 700 €',
+      '700-1500': '700 – 1 500 €',
+      'gt-1500': 'Nad 1 500 €',
+      unsure: 'Neviem, potrebujem poradiť',
+    },
+    cal: {
+      heading: 'Radšej hovor?',
+      text: 'Vyberte si termín bezplatnej 30-minútovej konzultácie.',
+      button: 'Zobraziť kalendár',
+      loading: 'Načítavam kalendár…',
+      fallback: 'Otvoriť rezerváciu v novom okne',
+    },
+    thanks: {
+      title: 'Ďakujem',
+      description: 'Správa bola odoslaná.',
+      heading: 'Ďakujem!',
+      text: 'Správu som dostal a ozvem sa vám e-mailom. Potvrdenie nájdete aj vo svojej schránke.',
+      home: 'Späť na úvod',
+      book: 'Dohodnúť konzultáciu',
+    },
+  },
+  en: {
+    page: {
+      title: 'Contact',
+      description: 'Tell me about your project, or book a free consultation straight away.',
+      intro:
+        'Tell me what you need and I will reply by email. If you prefer, you can pick a time for a call right away.',
+      directHeading: 'Or reach me directly',
+      emailLabel: 'Email',
+      whatsappLabel: 'WhatsApp',
+      linkedinLabel: 'LinkedIn',
+    },
+    form: {
+      heading: 'Write to me',
+      required: 'required',
+      nameLabel: 'Name',
+      emailLabel: 'Email',
+      projectTypeLabel: 'Project type',
+      projectTypePlaceholder: 'Choose an option',
+      projectTypeOther: 'Other',
+      budgetLabel: 'Approximate budget',
+      messageLabel: 'Message',
+      messageHint: 'A few sentences are enough: what you need and by when.',
+      consentBefore:
+        'I agree to my personal data being processed to reply to my message. More in the ',
+      consentLink: 'privacy policy',
+      consentAfter: '.',
+      submit: 'Send message',
+      submitting: 'Sending…',
+      noscript: 'JavaScript is needed to send the form. Please email me instead.',
+    },
+    errors: {
+      required: 'Please fill in this field.',
+      tooShort: 'This text is too short.',
+      tooLong: 'This text is too long.',
+      invalid: 'Please choose one of the options.',
+      emailInvalid: 'Enter an email like name@domain.com.',
+      consent: 'Your consent is needed to send the form.',
+      summary: 'Please fix the highlighted fields.',
+    },
+    states: {
+      error: 'The message could not be sent. Please try again or email me.',
+      verification: 'The spam check failed. Please try again.',
+      timeout: 'This is taking too long. Please try again or email me.',
+      success: 'Thank you, your message has been sent.',
+    },
+    unavailable: {
+      title: 'The form is temporarily unavailable',
+      text: 'Please email me directly.',
+    },
+    budget: {
+      'lt-300': 'Up to €300',
+      '300-700': '€300 – €700',
+      '700-1500': '€700 – €1,500',
+      'gt-1500': 'Over €1,500',
+      unsure: 'Not sure, I need advice',
+    },
+    cal: {
+      heading: 'Prefer a call?',
+      text: 'Pick a time for a free 30-minute consultation.',
+      button: 'Show calendar',
+      loading: 'Loading the calendar…',
+      fallback: 'Open the booking page in a new window',
+    },
+    thanks: {
+      title: 'Thank you',
+      description: 'Your message has been sent.',
+      heading: 'Thank you!',
+      text: 'I have received your message and will reply by email. You will also find a confirmation in your inbox.',
+      home: 'Back to home',
+      book: 'Book a consultation',
     },
   },
 };

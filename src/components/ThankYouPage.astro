@@ -1,0 +1,25 @@
+---
+import Button from './Button.astro';
+import Container from './Container.astro';
+import { site } from '../config';
+import { contactCopy } from '../i18n/copy';
+import { route, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = contactCopy[lang].thanks;
+---
+
+<Container class="py-20 md:py-32">
+  <h1 class="text-5xl md:text-7xl">{copy.heading}</h1>
+  <p class="mt-6 max-w-xl text-lg text-muted md:text-xl">{copy.text}</p>
+  <div class="mt-10 flex flex-wrap gap-3">
+    <Button href={site.calConsultation}>{copy.book}</Button>
+    <Button href={route(lang, 'home')} variant="secondary">
+      {copy.home}
+    </Button>
+  </div>
+</Container>

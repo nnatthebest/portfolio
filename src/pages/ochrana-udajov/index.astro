@@ -1,0 +1,14 @@
+---
+import PrivacyPage from '../../components/PrivacyPage.astro';
+import { site } from '../../config';
+import { getLang } from '../../i18n/ui';
+import { privacyCopy } from '../../i18n/privacy';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const lang = getLang(Astro.currentLocale);
+const copy = privacyCopy[lang];
+---
+
+<BaseLayout title={`${copy.title} — ${site.name}`} description={copy.description}>
+  <PrivacyPage lang={lang} />
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+interface Props {
+  /** Id of the control inside the slot; also the base of the hint and error ids. */
+  id: string;
+  label: string;
+  /** Shown as "(required)" next to the label. Omit for fields that have a default value. */
+  requiredLabel?: string;
+  hint?: string;
+}
+
+const { id, label, requiredLabel, hint } = Astro.props;
+---
+
+<div>
+  <label for={id} class="mb-1.5 block text-sm font-medium">
+    {label} {requiredLabel && <span class="font-normal text-muted">({requiredLabel})</span>}
+  </label>
+  <slot />
+  {hint && (
+    <p id={`${id}-hint`} class="mt-1.5 text-sm text-muted">
+      {hint}
+    </p>
+  )}
+  <p id={`${id}-error`} data-error-for={id} class="mt-1.5 text-sm text-accent-text" hidden></p>
+</div>

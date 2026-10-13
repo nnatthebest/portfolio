@@ -1,0 +1,14 @@
+---
+import ThankYouPage from '../../components/ThankYouPage.astro';
+import { site } from '../../config';
+import { contactCopy } from '../../i18n/copy';
+import { getLang } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const lang = getLang(Astro.currentLocale);
+const copy = contactCopy[lang].thanks;
+---
+
+<BaseLayout title={`${copy.title} — ${site.name}`} description={copy.description} noindex>
+  <ThankYouPage lang={lang} />
+</BaseLayout>
