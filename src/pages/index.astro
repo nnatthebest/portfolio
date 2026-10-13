@@ -1,12 +1,12 @@
 ---
 import HomePlaceholder from '../components/home/HomePlaceholder.astro';
 import { site } from '../config';
-import { routes, t } from '../i18n/ui';
+import { getLang, t } from '../i18n/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const lang = 'sk';
+const lang = getLang(Astro.currentLocale);
 ---
 
-<BaseLayout lang={lang} title={site.name} description={t(lang, 'tagline')} alternates={routes.home}>
+<BaseLayout title={site.name} description={t(lang, 'tagline')}>
   <HomePlaceholder lang={lang} />
 </BaseLayout>

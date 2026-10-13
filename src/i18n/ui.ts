@@ -58,15 +58,15 @@ export function t(lang: Lang, key: UiKey): string {
   return ui[lang][key];
 }
 
-/** Route map from CLAUDE.md. Home is `/` for sk and `/en/` for en. */
+/** Route map from CLAUDE.md. Every path ends with a slash (astro `trailingSlash: 'always'`). */
 export const routes = {
   home: { sk: '/', en: '/en/' },
-  projects: { sk: '/projekty', en: '/en/projects' },
-  services: { sk: '/sluzby', en: '/en/services' },
-  about: { sk: '/o-mne', en: '/en/about' },
-  contact: { sk: '/kontakt', en: '/en/contact' },
-  privacy: { sk: '/ochrana-udajov', en: '/en/privacy' },
-  thankYou: { sk: '/dakujem', en: '/en/thank-you' },
+  projects: { sk: '/projekty/', en: '/en/projects/' },
+  services: { sk: '/sluzby/', en: '/en/services/' },
+  about: { sk: '/o-mne/', en: '/en/about/' },
+  contact: { sk: '/kontakt/', en: '/en/contact/' },
+  privacy: { sk: '/ochrana-udajov/', en: '/en/privacy/' },
+  thankYou: { sk: '/dakujem/', en: '/en/thank-you/' },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type RouteKey = keyof typeof routes;
@@ -77,4 +77,43 @@ export function route(lang: Lang, key: RouteKey): string {
 
 export function otherLang(lang: Lang): Lang {
   return lang === 'sk' ? 'en' : 'sk';
+}
+
+/** Narrows `Astro.currentLocale` to a supported language, falling back to the default. */
+export function getLang(locale: string | undefined): Lang {
+  return languages.find((code) => code === locale) ?? defaultLang;
+}
+
+/** Case page URL. A case has the same slug in both languages. */
+export function projectPath(lang: Lang, slug: string): string {
+  return `${routes.projects[lang]}${slug}/`;
+}
+
+const withTrailingSlash = (path: string): string => (path.endsWith('/') ? path : `${path}/`);
+
+/**
+ * URLs of the page equivalent to `pathname` in every language, or undefined for pages
+ * outside the route table. Used by hreflang and the language switch, because Astro's
+ * built-in i18n cannot map translated slugs (`/projekty/` ↔ `/en/projects/`).
+ */
+export function resolveAlternates(pathname: string): Record<Lang, string> | undefined {
+  const path = withTrailingSlash(pathname);
+
+  for (const paths of Object.values(routes)) {
+    if (languages.some((lang) => paths[lang] === path)) {
+      return { sk: paths.sk, en: paths.en };
+    }
+  }
+
+  for (const lang of languages) {
+    const base = routes.projects[lang];
+    if (!path.startsWith(base)) continue;
+
+    const slug = path.slice(base.length, -1);
+    if (slug && !slug.includes('/')) {
+      return { sk: projectPath('sk', slug), en: projectPath('en', slug) };
+    }
+  }
+
+  return undefined;
 }

@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.3",
@@ -23,8 +25,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@vitest/coverage-v8": "^5.0.4",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.4"
   }
 }

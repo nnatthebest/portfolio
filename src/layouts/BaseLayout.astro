@@ -5,19 +5,30 @@ import ogDefault from '../assets/og-default.png';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { site } from '../config';
-import { defaultLang, languages, t, type Lang } from '../i18n/ui';
+import { defaultLang, getLang, languages, resolveAlternates, t, type Lang } from '../i18n/ui';
 
 interface Props {
-  lang: Lang;
+  /** Defaults to the language Astro detects from the URL (`Astro.currentLocale`). */
+  lang?: Lang;
   title: string;
   description: string;
-  /** Equivalent URL of this page per language. Enables hreflang and the language switch. */
+  /**
+   * Equivalent URL of this page per language, used for hreflang and the language switch.
+   * Defaults to the match in the route table; pages outside it (e.g. /styleguide/) get none.
+   */
   alternates?: Record<Lang, string>;
   image?: ImageMetadata;
   noindex?: boolean;
 }
 
-const { lang, title, description, alternates, image = ogDefault, noindex = false } = Astro.props;
+const {
+  lang = getLang(Astro.currentLocale),
+  title,
+  description,
+  alternates = resolveAlternates(Astro.url.pathname),
+  image = ogDefault,
+  noindex = false,
+} = Astro.props;
 
 const origin = Astro.site ?? new URL(Astro.url.origin);
 const absolute = (path: string) => new URL(path, origin).href;
