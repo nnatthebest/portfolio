@@ -1,1 +1,160 @@
 @import 'tailwindcss';
+
+/* Self-hosted fonts. latin-ext is required for Slovak diacritics (ľ, š, č, ť, ž, ň, ď, ô, ä). */
+@import '@fontsource-variable/bricolage-grotesque/wght.css';
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-ext-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-ext-500.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import '@fontsource/ibm-plex-sans/latin-ext-600.css';
+
+/*
+ * Design tokens — direction A "Workshop" (docs/brief.md).
+ * Brand colors: Ink #16181D, Paper #F6F4EF, Accent #E2552B, Muted #6B6E76, Line #E4E1D9.
+ * Derived tokens exist only to keep text at WCAG AA (≥ 4.5:1):
+ *   --accent-text  accent used as text/links (raw accent is 3.4:1 on Paper)
+ *   --on-accent    text on accent fills (Ink 4.7:1; white would be 3.8:1)
+ */
+:root {
+  color-scheme: light dark;
+
+  --bg: #f6f4ef;
+  --fg: #16181d;
+  --muted: #6b6e76;
+  --line: #e4e1d9;
+  --accent: #e2552b;
+  --accent-text: #b63e1a;
+  --on-accent: #16181d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181d;
+    --fg: #f6f4ef;
+    --muted: #a0a3aa;
+    --line: #2b2e35;
+    --accent: #e2552b;
+    --accent-text: #f0795a;
+    --on-accent: #16181d;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-ui: 8px;
+  --container-page: 72rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+/* Corner ticks on cards: thin "registration marks" on two opposite corners. */
+.ticks {
+  position: relative;
+}
+
+.ticks::before,
+.ticks::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  border: 0 solid var(--fg);
+}
+
+.ticks::before {
+  top: -4px;
+  left: -4px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.ticks::after {
+  right: -4px;
+  bottom: -4px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+/* Sections fade in on scroll — CSS only, no parallax, off for reduced motion. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

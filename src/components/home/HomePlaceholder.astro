@@ -1,0 +1,20 @@
+---
+import Button from '../Button.astro';
+import Container from '../Container.astro';
+import { site } from '../../config';
+import { t, type Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<!-- Temporary home. Replaced by the real homepage sections in stage 4. -->
+<Container class="py-20 md:py-32">
+  <h1 class="max-w-4xl text-5xl sm:text-6xl md:text-7xl">{t(lang, 'tagline')}</h1>
+  <div class="mt-10 flex flex-wrap gap-3">
+    <Button href={site.calConsultation}>{t(lang, 'ctaConsultation')}</Button>
+  </div>
+</Container>

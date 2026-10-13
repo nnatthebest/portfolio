@@ -1,0 +1,12 @@
+---
+import HomePlaceholder from '../../components/home/HomePlaceholder.astro';
+import { site } from '../../config';
+import { routes, t } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const lang = 'en';
+---
+
+<BaseLayout lang={lang} title={site.name} description={t(lang, 'tagline')} alternates={routes.home}>
+  <HomePlaceholder lang={lang} />
+</BaseLayout>

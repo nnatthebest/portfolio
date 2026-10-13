@@ -1,0 +1,87 @@
+---
+import Container from './Container.astro';
+import Monogram from './Monogram.astro';
+import { site } from '../config';
+import { route, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const year = new Date().getFullYear();
+
+const linkClass =
+  'inline-flex min-h-8 items-center text-fg underline decoration-line decoration-2 underline-offset-4 transition-colors duration-150 hover:decoration-accent-text';
+const headingClass = 'mb-3 text-sm font-medium tracking-wide text-muted uppercase';
+
+const contactLinks = [
+  { label: site.email, href: `mailto:${site.email}` },
+  { label: 'WhatsApp', href: site.whatsapp },
+  { label: 'LinkedIn', href: site.linkedin },
+  { label: 'GitHub', href: site.github },
+  { label: t(lang, 'footerQuickCall'), href: site.calQuickCall },
+].map((link) => ({ ...link, external: link.href.startsWith('http') }));
+---
+
+<footer class="border-t border-line py-12 md:py-16">
+  <Container>
+    <div class="grid gap-10 md:grid-cols-3">
+      <div>
+        <div class="flex items-center gap-3 text-fg">
+          <span aria-hidden="true">
+            <Monogram size={32} />
+          </span>
+          <span class="font-display font-semibold tracking-tight">{site.name}</span>
+        </div>
+        <p class="mt-4 max-w-xs text-muted">{t(lang, 'tagline')}</p>
+      </div>
+
+      <div>
+        <h2 class={headingClass}>{t(lang, 'footerContact')}</h2>
+        <ul>
+          {contactLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class={linkClass}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class={headingClass}>{t(lang, 'footerLegal')}</h2>
+        <p>
+          {site.legalName} · {t(lang, 'footerSole')}
+        </p>
+        <dl class="mt-1 text-muted">
+          <div class="flex gap-2">
+            <dt>{t(lang, 'footerIco')}:</dt>
+            <dd>{site.ico}</dd>
+          </div>
+          <div class="flex gap-2">
+            <dt>{t(lang, 'footerDic')}:</dt>
+            <dd>{site.dic}</dd>
+          </div>
+        </dl>
+        <p class="mt-1 text-muted">{t(lang, 'footerVat')}</p>
+        <!-- [TODO: postal address — add here once it is in docs/brief.md] -->
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-2 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © {year} {site.legalName}. {t(lang, 'footerRights')}
+      </p>
+      <a href={route(lang, 'privacy')} class={linkClass}>
+        {t(lang, 'footerPrivacy')}
+      </a>
+    </div>
+  </Container>
+</footer>

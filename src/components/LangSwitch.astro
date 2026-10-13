@@ -1,0 +1,26 @@
+---
+import { otherLang, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  /** URL of the equivalent page in the other language. */
+  href: string;
+  class?: string;
+}
+
+const { lang, href, class: className = '' } = Astro.props;
+const target = otherLang(lang);
+---
+
+<a
+  href={href}
+  hreflang={target}
+  lang={target}
+  aria-label={t(lang, 'switchLangLabel')}
+  class:list={[
+    'inline-flex min-h-10 min-w-11 items-center justify-center rounded-ui border border-line px-3 text-sm font-medium tracking-wide text-fg transition-colors duration-150 hover:border-fg',
+    className,
+  ]}
+>
+  {t(lang, 'switchLangText')}
+</a>

@@ -1,0 +1,130 @@
+---
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Container from '../components/Container.astro';
+import Monogram from '../components/Monogram.astro';
+import Section from '../components/Section.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Internal, noindex page: copy is English on purpose and is not part of the public site.
+const swatches = [
+  { name: 'bg', cls: 'bg-bg' },
+  { name: 'fg', cls: 'bg-fg' },
+  { name: 'muted', cls: 'bg-muted' },
+  { name: 'line', cls: 'bg-line' },
+  { name: 'accent', cls: 'bg-accent' },
+  { name: 'accent-text', cls: 'bg-accent-text' },
+];
+
+const textPairs = [
+  { label: 'fg on bg', cls: 'bg-bg text-fg' },
+  { label: 'muted on bg', cls: 'bg-bg text-muted' },
+  { label: 'accent-text on bg', cls: 'bg-bg text-accent-text' },
+  { label: 'on-accent on accent', cls: 'bg-accent text-on-accent' },
+];
+
+const stack = ['Astro', 'Tailwind', 'n8n'];
+---
+
+<BaseLayout
+  lang="en"
+  title="Styleguide — Daniil"
+  description="Internal design-system reference."
+  noindex
+>
+  <Container class="py-16 md:py-24">
+    <p class="mb-3 text-sm font-medium text-muted">Internal · noindex</p>
+    <h1 class="text-5xl md:text-7xl">Styleguide</h1>
+    <p class="mt-6 max-w-2xl text-muted">
+      Direction A — Workshop. Switch your system theme to check the dark palette. The header and
+      footer on this page are the real components.
+    </p>
+  </Container>
+
+  <Section id="colors" number="01" heading="Colors">
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+      {swatches.map((swatch) => (
+        <div>
+          <div class={`h-16 rounded-ui border border-line ${swatch.cls}`}></div>
+          <p class="mt-2 text-sm text-muted">{swatch.name}</p>
+        </div>
+      ))}
+    </div>
+    <h3 class="mt-12 mb-4 text-xl">Text pairs (all ≥ 4.5:1)</h3>
+    <div class="grid gap-4 sm:grid-cols-2">
+      {textPairs.map((pair) => (
+        <p class={`rounded-ui border border-line p-4 font-medium ${pair.cls}`}>{pair.label} — Aa</p>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="type" number="02" heading="Typography">
+    <div class="space-y-6">
+      <p class="font-display text-5xl leading-[1.08] font-semibold tracking-tight md:text-7xl">
+        Weby a automatizácia pre malé firmy
+      </p>
+      <h3 class="text-4xl">Heading three — Bricolage Grotesque</h3>
+      <h4 class="text-2xl">Heading four</h4>
+      <p class="max-w-2xl">
+        Body text in IBM Plex Sans. Krátke vety, výhoda pre klienta na prvom mieste. Short
+        sentences, the client's benefit first.
+      </p>
+      <p class="text-sm text-muted">Small muted text, for captions and secondary information.</p>
+      <p>
+        <a
+          href="#type"
+          class="text-accent-text underline decoration-1 underline-offset-4 hover:decoration-2"
+        >
+          An inline link
+        </a>
+      </p>
+      <p class="font-display text-3xl tracking-tight">ľščťžýáíéúôäňď ĽŠČŤŽÝÁÍÉÚÔÄŇĎ</p>
+      <p class="text-2xl">ľščťžýáíéúôäňď ĽŠČŤŽÝÁÍÉÚÔÄŇĎ</p>
+    </div>
+  </Section>
+
+  <Section id="buttons" number="03" heading="Buttons">
+    <div class="flex flex-wrap items-center gap-4">
+      <Button href="#buttons">Primary</Button>
+      <Button href="#buttons" variant="secondary">
+        Secondary
+      </Button>
+      <Button href="#buttons" variant="ghost">
+        Ghost
+      </Button>
+      <Button href="#buttons" size="sm">
+        Small
+      </Button>
+      <Button>As button</Button>
+      <Button disabled>Disabled</Button>
+    </div>
+  </Section>
+
+  <Section id="cards" number="04" heading="Cards">
+    <div class="grid gap-6 md:grid-cols-2">
+      <Card as="article">
+        <p class="text-sm font-medium text-muted">Koncept · website</p>
+        <h3 class="mt-2 text-2xl">Bistro Lipa</h3>
+        <p class="mt-2 text-muted">Staré menu v PDF, rezervácie len telefonicky.</p>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {stack.map((item) => (
+            <li class="rounded-ui border border-line px-2.5 py-1 text-sm text-muted">{item}</li>
+          ))}
+        </ul>
+      </Card>
+      <Card href="#cards">
+        <p class="text-sm font-medium text-muted">Linked card</p>
+        <h3 class="mt-2 text-2xl">Hover for the border</h3>
+        <p class="mt-2 text-muted">The whole card is one link with a visible focus ring.</p>
+      </Card>
+    </div>
+  </Section>
+
+  <Section id="monogram" number="05" heading="Monogram">
+    <div class="flex items-end gap-6 text-fg">
+      <Monogram size={32} />
+      <Monogram size={64} />
+      <Monogram size={128} />
+    </div>
+  </Section>
+</BaseLayout>

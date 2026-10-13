@@ -1,0 +1,86 @@
+---
+import '../styles/global.css';
+import headingFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import ogDefault from '../assets/og-default.png';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { site } from '../config';
+import { defaultLang, languages, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Equivalent URL of this page per language. Enables hreflang and the language switch. */
+  alternates?: Record<Lang, string>;
+  image?: ImageMetadata;
+  noindex?: boolean;
+}
+
+const { lang, title, description, alternates, image = ogDefault, noindex = false } = Astro.props;
+
+const origin = Astro.site ?? new URL(Astro.url.origin);
+const absolute = (path: string) => new URL(path, origin).href;
+const canonical = absolute(alternates?.[lang] ?? Astro.url.pathname);
+const ogImage = absolute(image.src);
+
+const ogLocale: Record<Lang, string> = { sk: 'sk_SK', en: 'en_US' };
+const alternateLocales = languages.filter((code) => code !== lang).map((code) => ogLocale[code]);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#F6F4EF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16181D" media="(prefers-color-scheme: dark)" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="canonical" href={canonical} />
+    {alternates &&
+      languages.map((code) => (
+        <link rel="alternate" hreflang={code} href={absolute(alternates[code])} />
+      ))}
+    {alternates && (
+      <link rel="alternate" hreflang="x-default" href={absolute(alternates[defaultLang])} />
+    )}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(image.width)} />
+    <meta property="og:image:height" content={String(image.height)} />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {alternateLocales.map((locale) => (
+      <meta property="og:locale:alternate" content={locale} />
+    ))}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-ui focus:bg-fg focus:px-4 focus:py-3 focus:text-bg"
+    >
+      {t(lang, 'skipToContent')}
+    </a>
+    <Header lang={lang} alternates={alternates} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

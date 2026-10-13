@@ -1,0 +1,56 @@
+---
+interface Props {
+  /** Renders an <a> when set, otherwise a <button>. */
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'md' | 'sm';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  disabled = false,
+  class: className = '',
+} = Astro.props;
+
+const isExternal = href !== undefined && /^https?:\/\//.test(href);
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-ui font-sans font-medium whitespace-nowrap ' +
+  'transition-colors duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50';
+
+const variants = {
+  primary: 'bg-accent text-on-accent hover:bg-fg hover:text-bg',
+  secondary: 'border border-fg text-fg hover:bg-fg hover:text-bg',
+  ghost:
+    'text-fg underline decoration-line decoration-2 underline-offset-4 hover:decoration-accent-text',
+} as const;
+
+const sizes = {
+  md: 'min-h-11 px-5 text-base',
+  sm: 'min-h-10 px-4 text-sm',
+} as const;
+
+const classes = [base, variants[variant], sizes[size], className];
+---
+
+{href !== undefined ? (
+  <a
+    href={href}
+    class:list={classes}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
+    aria-disabled={disabled ? 'true' : undefined}
+  >
+    <slot />
+  </a>
+) : (
+  <button type={type} class:list={classes} disabled={disabled}>
+    <slot />
+  </button>
+)}
